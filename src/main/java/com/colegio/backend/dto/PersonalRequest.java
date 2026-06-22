@@ -3,7 +3,7 @@ package com.colegio.backend.dto;
 import lombok.Data;
 
 @Data
-public class PersonalRegistroRequest {
+public class PersonalRequest {
     private Integer idTipoDoc;
     private String nroDocumento;
     private String nombres;

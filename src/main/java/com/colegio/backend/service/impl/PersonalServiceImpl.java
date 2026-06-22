@@ -1,7 +1,7 @@
 package com.colegio.backend.service.impl;
 
 import com.colegio.backend.dao.PersonalRepository;
-import com.colegio.backend.dto.PersonalRegistroRequest;
+import com.colegio.backend.dto.PersonalRequest;
 import com.colegio.backend.model.*;
 import com.colegio.backend.service.PersonalService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class PersonalServiceImpl implements PersonalService {
     }
 
     @Override
-    public Personal registrarPersonal(PersonalRegistroRequest dto) {
+    public Personal registrarPersonal(PersonalRequest dto) {
         if (personalRepository.existsByNroDocumento(dto.getNroDocumento())) {
             throw new RuntimeException("El número de documento ya se encuentra registrado.");
         }
@@ -67,7 +67,7 @@ public class PersonalServiceImpl implements PersonalService {
     }
 
     @Override
-    public Personal modificarPersonal(Integer id, PersonalRegistroRequest dto) {
+    public Personal modificarPersonal(Integer id, PersonalRequest dto) {
         // 1. Verificar si el personal existe
         Personal personal = personalRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Personal no encontrado con el ID: " + id));

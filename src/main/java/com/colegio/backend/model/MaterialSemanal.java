@@ -15,8 +15,8 @@ public class MaterialSemanal {
     private Integer idMaterial;
 
     @ManyToOne
-    @JoinColumn(name = "id_curso", nullable = false, foreignKey = @ForeignKey(name = "fk_material_curso"))
-    private Cursos idCurso;
+    @JoinColumn(name = "id_clase", nullable = false, foreignKey = @ForeignKey(name = "fk_material_clase"))
+    private Clases idClase;
 
     @Column(name = "titulo", nullable = false, length = 200)
     private String titulo;

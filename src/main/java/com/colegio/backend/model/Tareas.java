@@ -14,9 +14,10 @@ public class Tareas {
     @Column(name = "id_tarea")
     private Integer idTarea;
 
+    // 🔄 Cambiado de idCurso a idClase para cumplir la regla "cada clase tiene una tarea"
     @ManyToOne
-    @JoinColumn(name = "id_curso", nullable = false, foreignKey = @ForeignKey(name = "fk_tarea_curso"))
-    private Cursos idCurso;
+    @JoinColumn(name = "id_clase", nullable = false, foreignKey = @ForeignKey(name = "fk_tarea_clase"))
+    private Clases idClase;
 
     @Column(name = "titulo", nullable = false, length = 200)
     private String titulo;

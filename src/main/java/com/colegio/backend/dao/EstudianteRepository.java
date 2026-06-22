@@ -9,4 +9,5 @@ import java.util.List;
 public interface EstudianteRepository extends JpaRepository<Estudiantes, Integer> {
     // Busca estudiantes filtrando los que no han sido dados de baja
     List<Estudiantes> findByEstado(String estado);
+    List<Estudiantes> findByIdGrado_IdGrado(Integer idGrado);
 }

@@ -1,6 +1,8 @@
 package com.colegio.backend.controller;
 
 import com.colegio.backend.dto.EstudianteRequest;
+import com.colegio.backend.model.Estudiantes;
+import com.colegio.backend.service.AsistenciaService;
 import com.colegio.backend.service.EstudianteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,9 @@ public class EstudianteController {
 
     @Autowired
     private EstudianteService service;
+
+    @Autowired
+    private AsistenciaService asistenciaService;
 
     @GetMapping
     public ResponseEntity<List<EstudianteRequest>> listarActivos() {
@@ -46,5 +51,14 @@ public class EstudianteController {
     public ResponseEntity<Void> eliminarLogico(@PathVariable("id") Integer id) {
         service.eliminarLogico(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/grado/{idGrado}")
+    public ResponseEntity<List<Estudiantes>> obtenerEstudiantesPorGrado(@PathVariable Integer idGrado) {
+        List<Estudiantes> estudiantes = asistenciaService.obtenerEstudiantesPorGrado(idGrado);
+        if (estudiantes.isEmpty()) {
+            return ResponseEntity.noContent().build(); 
+        }
+        return ResponseEntity.ok(estudiantes);
     }
 }

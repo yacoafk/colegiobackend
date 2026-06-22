@@ -1,6 +1,6 @@
 package com.colegio.backend.controller;
 
-import com.colegio.backend.dto.PersonalRegistroRequest;
+import com.colegio.backend.dto.PersonalRequest;
 import com.colegio.backend.model.Personal;
 import com.colegio.backend.service.PersonalService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class PersonalController {
     private PersonalService personalService;
 
     @PostMapping("/registrar")
-    public ResponseEntity<?> registrar(@RequestBody PersonalRegistroRequest registroDTO) {
+    public ResponseEntity<?> registrar(@RequestBody PersonalRequest registroDTO) {
         try {
             Personal nuevoPersonal = personalService.registrarPersonal(registroDTO);
             nuevoPersonal.setContrasenia(null); 
@@ -29,7 +29,7 @@ public class PersonalController {
 
     // 🔄 ENDPOINT PARA MODIFICAR (PUT)
     @PutMapping("/modificar/{id}")
-    public ResponseEntity<?> modificar(@PathVariable Integer id, @RequestBody PersonalRegistroRequest registroDTO) {
+    public ResponseEntity<?> modificar(@PathVariable Integer id, @RequestBody PersonalRequest registroDTO) {
         try {
             Personal personalModificado = personalService.modificarPersonal(id, registroDTO);
             personalModificado.setContrasenia(null); // Seguridad

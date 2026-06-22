@@ -28,5 +28,8 @@ public class Clases {
     private String urlVideoconferencia;
 
     @Column(name = "fecha_clase", nullable = false)
-    private LocalDateTime fechaClase; // Mapea perfectamente con el DATETIME de SQL
+    private LocalDateTime fechaClase;
+
+    @Column(name = "fecha_termino", nullable = false)
+    private LocalDateTime fechaTermino;
 }
