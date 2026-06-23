@@ -7,6 +7,7 @@ import com.colegio.backend.dto.PadreRequest;
 import com.colegio.backend.model.*;
 import com.colegio.backend.service.PadreService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,9 @@ import java.util.stream.Collectors;
 public class PadreServiceImpl implements PadreService {
 
     @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
     private PadreRepository padreRepository;
 
     @Autowired
@@ -25,9 +29,7 @@ public class PadreServiceImpl implements PadreService {
     @Override
     @Transactional
     public void registrarPadre(PadreRequest request) {
-        // 1. Crear y guardar la entidad Padre
         Padres padre = new Padres();
-        
         TiposDocumento td = new TiposDocumento();
         td.setIdTipoDoc(request.getIdTipoDoc());
         padre.setIdTipoDoc(td);
@@ -35,6 +37,9 @@ public class PadreServiceImpl implements PadreService {
         padre.setNroDocumento(request.getNroDocumento());
         padre.setNombres(request.getNombres());
         padre.setApellidos(request.getApellidos());
+        
+        // Asignar el número de documento como contraseña inicial y encriptar
+        padre.setContrasenia(passwordEncoder.encode(request.getNroDocumento()));
         
         Padres padreGuardado = padreRepository.save(padre);
 
@@ -84,25 +89,47 @@ public class PadreServiceImpl implements PadreService {
         }
     }
 
-    // Cambia PadreEstudianteResponse por PadreEstudianteRequest aquí:
-    @Override
-    @Transactional(readOnly = true)
+    // Dentro de PadreServiceImpl
     public List<PadreEstudianteRequest> listarPadresPorEstudiante(Integer idEstudiante) {
         List<EstudiantePadre> relaciones = estudiantePadreRepository.findByIdIdEstudiante(idEstudiante);
 
         return relaciones.stream().map(rel -> {
             Padres p = rel.getPadre();
-            String tipoDoc = (p.getIdTipoDoc() != null) ? p.getIdTipoDoc().getDescripcion() : "N/A";
+            Estudiantes e = rel.getEstudiante(); // ¡Aquí obtienes la entidad estudiante!
             
-            // Cambia PadreEstudianteResponse por PadreEstudianteRequest aquí también:
             return new PadreEstudianteRequest(
                     p.getIdPadre(),
-                    tipoDoc,
+                    p.getIdTipoDoc().getDescripcion(),
                     p.getNroDocumento(),
                     p.getNombres(),
                     p.getApellidos(),
-                    rel.getParentesco()
+                    rel.getParentesco(),
+                    e.getNombres(),
+                    e.getApellidos(),
+                    e.getNroDocumento()
             );
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Padres> listarTodos() {
+        return padreRepository.findAll();
+    }
+
+    @Override
+    public List<PadreEstudianteRequest> listarPorSedeYGrado(Integer idSede, Integer idGrado) {
+        // Ya no necesitas transformar nada, el repositorio te entrega la lista lista para el JSON
+        return padreRepository.findBySedeAndGrado(idSede, idGrado);
+    }
+
+    @Override
+    @Transactional
+    public void actualizarContrasenia(Integer idPadre, String nuevaContrasenia) {
+        Padres padre = padreRepository.findById(idPadre)
+            .orElseThrow(() -> new RuntimeException("Padre no encontrado"));
+        
+        // Encriptar la nueva contraseña
+        padre.setContrasenia(passwordEncoder.encode(nuevaContrasenia));
+        padreRepository.save(padre);
     }
 }

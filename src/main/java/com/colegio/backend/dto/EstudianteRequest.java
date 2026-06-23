@@ -18,4 +18,6 @@ public class EstudianteRequest {
     private Integer idGrado;       // Enviamos solo el ID numérico
     private Integer idSede;        // Enviamos solo el ID numérico
     private BigDecimal montoPension;
+
+    private String contrasenia;    // Para la creación de la cuenta
 }

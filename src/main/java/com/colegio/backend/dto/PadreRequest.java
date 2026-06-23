@@ -9,6 +9,7 @@ public class PadreRequest {
     private String nroDocumento;
     private String nombres;
     private String apellidos;
+    private String contrasenia;
     
     // Datos de vinculación con el estudiante al registrar
     private Integer idEstudiante; 

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/estudiantes")
@@ -60,5 +61,22 @@ public class EstudianteController {
             return ResponseEntity.noContent().build(); 
         }
         return ResponseEntity.ok(estudiantes);
+    }
+
+@PutMapping("/actualizar-contrasenia/{id}")
+    public ResponseEntity<?> actualizarContrasenia(@PathVariable Integer id, @RequestBody Map<String, String> body) {
+        try {
+            String nuevaContrasenia = body.get("nuevaContrasenia");
+            if (nuevaContrasenia == null || nuevaContrasenia.isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "La contraseña es requerida."));
+            }
+            // AQUÍ ESTABA EL ERROR, DEBE SER "service" (el nombre de tu variable inyectada)
+            service.actualizarContrasenia(id, nuevaContrasenia); 
+            
+            return ResponseEntity.ok(Map.of("mensaje", "Contraseña actualizada exitosamente."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error al actualizar la contraseña: " + e.getMessage()));
+        }
     }
 }

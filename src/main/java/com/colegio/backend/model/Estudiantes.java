@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "estudiantes")
@@ -50,6 +51,20 @@ public class Estudiantes {
 
     @Column(name = "monto_pension", nullable = false, precision = 10, scale = 2)
     private BigDecimal montoPension = BigDecimal.ZERO;
+    
+
+    @Column(name = "contrasenia", nullable = false, length = 100)
+    private String contrasenia;
+
+    @Column(name = "intentos_fallidos", columnDefinition = "int default 0")
+    private Integer intentosFallidos = 0;
+
+    @Column(name = "bloqueado", columnDefinition = "boolean default false")
+    private boolean bloqueado = false;
+
+    @Column(name = "fecha_bloqueo")
+    private LocalDateTime fechaBloqueo;
+
 
     @PrePersist
     protected void onCreate() {

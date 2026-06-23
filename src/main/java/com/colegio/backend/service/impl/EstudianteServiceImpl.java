@@ -4,16 +4,24 @@ import com.colegio.backend.dto.EstudianteRequest;
 import com.colegio.backend.model.Estudiantes;
 import com.colegio.backend.model.TiposDocumento;
 import com.colegio.backend.model.Grados;
+import com.colegio.backend.model.Padres;
 import com.colegio.backend.model.Sede;
 import com.colegio.backend.dao.EstudianteRepository;
 import com.colegio.backend.service.EstudianteService;
+
+import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class EstudianteServiceImpl implements EstudianteService {
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private EstudianteRepository repository;
@@ -36,10 +44,23 @@ public class EstudianteServiceImpl implements EstudianteService {
     }
 
     @Override
+    @Transactional
     public EstudianteRequest registrar(EstudianteRequest dto) {
+        // 1. Mapear el DTO a la entidad
         Estudiantes estudiante = mappearDtoAEntity(dto);
-        // El estado se autodefine como "ACTIVO" en el @PrePersist de la Entidad
+        
+        // 2. Asignar contraseña: DNI encriptado
+        // Asegúrate de que dto.getNroDocumento() no sea nulo
+        if (dto.getNroDocumento() != null) {
+            estudiante.setContrasenia(passwordEncoder.encode(dto.getNroDocumento()));
+        } else {
+            throw new RuntimeException("El número de documento es obligatorio para generar la contraseña.");
+        }
+        
+        // 3. Guardar el estudiante
         Estudiantes guardado = repository.save(estudiante);
+        
+        // 4. Retornar el DTO
         return convertirAEntityRequest(guardado);
     }
 
@@ -78,6 +99,16 @@ public class EstudianteServiceImpl implements EstudianteService {
         repository.save(existente);
     }
 
+    @Override
+    @Transactional
+    public void actualizarContrasenia(Integer idEstudiante, String nuevaContrasenia) {
+        Estudiantes estudiante = repository.findById(idEstudiante)
+                .orElseThrow(() -> new RuntimeException("Estudiante no encontrado con ID: " + idEstudiante));
+        
+        // Encriptar y guardar la nueva contraseña
+        estudiante.setContrasenia(passwordEncoder.encode(nuevaContrasenia));
+        repository.save(estudiante);
+    }
     // Métodos auxiliares manuales de mapeo (puedes cambiarlos por ModelMapper o MapStruct si usas librerías)
     private EstudianteRequest convertirAEntityRequest(Estudiantes e) {
         EstudianteRequest dto = new EstudianteRequest();

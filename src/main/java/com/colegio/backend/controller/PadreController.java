@@ -2,6 +2,7 @@ package com.colegio.backend.controller;
 
 import com.colegio.backend.dto.PadreEstudianteRequest;
 import com.colegio.backend.dto.PadreRequest;
+import com.colegio.backend.model.Padres;
 import com.colegio.backend.service.PadreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,6 +51,43 @@ public class PadreController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Error al consultar los apoderados del estudiante."));
+        }
+    }
+
+    @GetMapping("/listar")
+    public ResponseEntity<?> listarTodos() {
+        try {
+            List<Padres> lista = padreService.listarTodos();
+            return ResponseEntity.ok(lista);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error al obtener la lista de apoderados."));
+        }
+    }
+
+    @GetMapping("/filtrar")
+    public ResponseEntity<?> filtrarPadres(@RequestParam Integer idSede, @RequestParam Integer idGrado) {
+        try {
+            List<PadreEstudianteRequest> lista = padreService.listarPorSedeYGrado(idSede, idGrado);
+            return ResponseEntity.ok(lista);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error al filtrar apoderados."));
+        }
+    }
+
+    @PutMapping("/actualizar-contrasenia/{idPadre}")
+    public ResponseEntity<?> actualizarContrasenia(@PathVariable Integer idPadre, @RequestBody Map<String, String> request) {
+        try {
+            String nuevaContrasenia = request.get("nuevaContrasenia");
+            if (nuevaContrasenia == null || nuevaContrasenia.isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "La contraseña no puede estar vacía"));
+            }
+            padreService.actualizarContrasenia(idPadre, nuevaContrasenia);
+            return ResponseEntity.ok(Map.of("mensaje", "Contraseña actualizada correctamente."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", e.getMessage()));
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.colegio.backend.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -31,6 +33,15 @@ public class Personal {
 
     @Column(name = "contrasenia", nullable = false, length = 100)
     private String contrasenia;
+
+    @Column(name = "intentos_fallidos", columnDefinition = "int default 0")
+    private Integer intentosFallidos = 0;
+
+    @Column(name = "bloqueado", columnDefinition = "boolean default false")
+    private boolean bloqueado = false;
+
+    @Column(name = "fecha_bloqueo")
+    private LocalDateTime fechaBloqueo;
 
     @ManyToOne
     @JoinColumn(name = "id_rol", nullable = false, foreignKey = @ForeignKey(name = "fk_personal_rol"))

@@ -10,4 +10,5 @@ public interface EstudianteService {
     EstudianteRequest registrar(EstudianteRequest dto);
     EstudianteRequest modificar(Integer id, EstudianteRequest dto);
     void eliminarLogico(Integer id); // 👈 El borrado lógico pedido
+    void actualizarContrasenia(Integer idEstudiante, String nuevaContrasenia);
 }
