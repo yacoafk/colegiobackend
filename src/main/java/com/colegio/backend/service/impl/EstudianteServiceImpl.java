@@ -46,11 +46,10 @@ public class EstudianteServiceImpl implements EstudianteService {
     @Override
     @Transactional
     public EstudianteRequest registrar(EstudianteRequest dto) {
-        // 1. Mapear el DTO a la entidad
+        // 1. Mapear el DTO a la entidad (usando el helper que incluye todos los campos nuevos)
         Estudiantes estudiante = mappearDtoAEntity(dto);
         
         // 2. Asignar contraseña: DNI encriptado
-        // Asegúrate de que dto.getNroDocumento() no sea nulo
         if (dto.getNroDocumento() != null) {
             estudiante.setContrasenia(passwordEncoder.encode(dto.getNroDocumento()));
         } else {
@@ -62,13 +61,15 @@ public class EstudianteServiceImpl implements EstudianteService {
         
         // 4. Retornar el DTO
         return convertirAEntityRequest(guardado);
-    }
+        }
 
     @Override
+    @Transactional
     public EstudianteRequest modificar(Integer id, EstudianteRequest dto) {
         Estudiantes existente = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Estudiante no encontrado para actualizar"));
         
+        // Datos básicos y de identidad
         existente.setCodigoEstudiante(dto.getCodigoEstudiante());
         existente.setNroDocumento(dto.getNroDocumento());
         existente.setNombres(dto.getNombres());
@@ -76,15 +77,42 @@ public class EstudianteServiceImpl implements EstudianteService {
         existente.setFechaNacimiento(dto.getFechaNacimiento());
         existente.setSexo(dto.getSexo());
         existente.setMontoPension(dto.getMontoPension());
+        existente.setEstado(dto.getEstado());
+
+        // Contacto y Ubicación
+        existente.setCelular(dto.getCelular());
+        existente.setCorreo(dto.getCorreo());
+        existente.setDireccion(dto.getDireccion());
+
+        // Procedencia
+        existente.setColegioProcedencia(dto.getColegioProcedencia());
+
+        // Datos Médicos
+        existente.setTipoAlumno(dto.getTipoAlumno());
+        existente.setRecomendacionesMedicas(dto.getRecomendacionesMedicas());
+        existente.setTieneInformePsicologico(dto.getTieneInformePsicologico());
+        existente.setTieneCertificadoMedico(dto.getTieneCertificadoMedico());
+        existente.setHistorialClinico(dto.getHistorialClinico());
+
+        // Referencia
+        existente.setContactoReferencia(dto.getContactoReferencia());
 
         // Re-asignación de entidades relacionadas
-        TiposDocumento td = new TiposDocumento(); td.setIdTipoDoc(dto.getIdTipoDoc());
-        Grados g = new Grados(); g.setIdGrado(dto.getIdGrado());
-        Sede s = new Sede(); s.setIdSede(dto.getIdSede());
-
-        existente.setIdTipoDoc(td);
-        existente.setIdGrado(g);
-        existente.setIdSede(s);
+        if (dto.getIdTipoDoc() != null) {
+            TiposDocumento td = new TiposDocumento(); 
+            td.setIdTipoDoc(dto.getIdTipoDoc()); 
+            existente.setIdTipoDoc(td);
+        }
+        if (dto.getIdGrado() != null) {
+            Grados g = new Grados(); 
+            g.setIdGrado(dto.getIdGrado()); 
+            existente.setIdGrado(g);
+        }
+        if (dto.getIdSede() != null) {
+            Sede s = new Sede(); 
+            s.setIdSede(dto.getIdSede()); 
+            existente.setIdSede(s);
+        }
 
         Estudiantes actualizado = repository.save(existente);
         return convertirAEntityRequest(actualizado);
@@ -95,7 +123,7 @@ public class EstudianteServiceImpl implements EstudianteService {
         Estudiantes existente = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("No se encontró el estudiante a retirar"));
         
-        existente.setEstado("RETIRADO"); // 👈 Cambia estado en lugar de ejecutar un hard delete SQL
+        existente.setEstado("RETIRADO"); 
         repository.save(existente);
     }
 
@@ -112,6 +140,7 @@ public class EstudianteServiceImpl implements EstudianteService {
     // Métodos auxiliares manuales de mapeo (puedes cambiarlos por ModelMapper o MapStruct si usas librerías)
     private EstudianteRequest convertirAEntityRequest(Estudiantes e) {
         EstudianteRequest dto = new EstudianteRequest();
+        // Datos básicos
         dto.setIdEstudiante(e.getIdEstudiante());
         dto.setCodigoEstudiante(e.getCodigoEstudiante());
         dto.setIdTipoDoc(e.getIdTipoDoc() != null ? e.getIdTipoDoc().getIdTipoDoc() : null);
@@ -124,11 +153,25 @@ public class EstudianteServiceImpl implements EstudianteService {
         dto.setIdGrado(e.getIdGrado() != null ? e.getIdGrado().getIdGrado() : null);
         dto.setIdSede(e.getIdSede() != null ? e.getIdSede().getIdSede() : null);
         dto.setMontoPension(e.getMontoPension());
+
+        // Nuevos campos mapeados
+        dto.setCelular(e.getCelular());
+        dto.setCorreo(e.getCorreo());
+        dto.setDireccion(e.getDireccion());
+        dto.setColegioProcedencia(e.getColegioProcedencia());
+        dto.setTipoAlumno(e.getTipoAlumno());
+        dto.setRecomendacionesMedicas(e.getRecomendacionesMedicas());
+        dto.setTieneInformePsicologico(e.getTieneInformePsicologico());
+        dto.setTieneCertificadoMedico(e.getTieneCertificadoMedico());
+        dto.setHistorialClinico(e.getHistorialClinico());
+        dto.setContactoReferencia(e.getContactoReferencia());
+
         return dto;
     }
 
     private Estudiantes mappearDtoAEntity(EstudianteRequest dto) {
         Estudiantes e = new Estudiantes();
+        // Datos básicos
         e.setCodigoEstudiante(dto.getCodigoEstudiante());
         e.setNroDocumento(dto.getNroDocumento());
         e.setNombres(dto.getNombres());
@@ -138,6 +181,19 @@ public class EstudianteServiceImpl implements EstudianteService {
         e.setMontoPension(dto.getMontoPension());
         e.setEstado(dto.getEstado());
 
+        // Nuevos campos
+        e.setCelular(dto.getCelular());
+        e.setCorreo(dto.getCorreo());
+        e.setDireccion(dto.getDireccion());
+        e.setColegioProcedencia(dto.getColegioProcedencia());
+        e.setTipoAlumno(dto.getTipoAlumno());
+        e.setRecomendacionesMedicas(dto.getRecomendacionesMedicas());
+        e.setTieneInformePsicologico(dto.getTieneInformePsicologico());
+        e.setTieneCertificadoMedico(dto.getTieneCertificadoMedico());
+        e.setHistorialClinico(dto.getHistorialClinico());
+        e.setContactoReferencia(dto.getContactoReferencia());
+
+        // Asignación de relaciones (usando referencias simples por ID)
         if(dto.getIdTipoDoc() != null){
             TiposDocumento td = new TiposDocumento(); td.setIdTipoDoc(dto.getIdTipoDoc()); e.setIdTipoDoc(td);
         }

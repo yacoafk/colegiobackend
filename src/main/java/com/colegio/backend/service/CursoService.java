@@ -12,8 +12,6 @@ public interface CursoService {
     CursoRequest registrar(CursoRequest request);
     CursoRequest modificar(Integer id, CursoRequest request);
     void eliminar(Integer id);
-
     Personal obtenerPersonalPorCurso(Integer idCurso);
-
     List<Cursos> listarCursosPorProfesor(Integer idPersonal);
 }

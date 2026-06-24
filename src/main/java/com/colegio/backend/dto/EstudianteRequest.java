@@ -14,10 +14,29 @@ public class EstudianteRequest {
     private String apellidos;
     private LocalDate fechaNacimiento;
     private String sexo;
-    private String estado;         // Opcional en el Request de creación
+    private String estado;         
     private Integer idGrado;       // Enviamos solo el ID numérico
     private Integer idSede;        // Enviamos solo el ID numérico
     private BigDecimal montoPension;
 
-    private String contrasenia;    // Para la creación de la cuenta
+    private String contrasenia;    
+
+    // Contacto y Ubicación
+    private String celular;
+    private String correo;
+    private String direccion;
+
+    // Procedencia
+    private String colegioProcedencia;
+
+    // Datos Médicos (Mapeados como String para tus Varchar)
+    private String tipoAlumno;
+    private String recomendacionesMedicas;
+    private String tieneInformePsicologico; // "Si" o "No"
+    private String tieneCertificadoMedico;  // "Si" o "No"
+    private String historialClinico;
+
+    // Referencia
+    private String contactoReferencia;
+
 }

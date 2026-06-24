@@ -52,7 +52,6 @@ public class Estudiantes {
     @Column(name = "monto_pension", nullable = false, precision = 10, scale = 2)
     private BigDecimal montoPension = BigDecimal.ZERO;
     
-
     @Column(name = "contrasenia", nullable = false, length = 100)
     private String contrasenia;
 
@@ -65,6 +64,41 @@ public class Estudiantes {
     @Column(name = "fecha_bloqueo")
     private LocalDateTime fechaBloqueo;
 
+    // --- Nuevos campos para la Ficha de Matrícula ---
+
+    // Datos de contacto y ubicación
+    @Column(name = "celular", length = 20)
+    private String celular;
+
+    @Column(name = "correo", length = 100)
+    private String correo;
+
+    @Column(name = "direccion", length = 255)
+    private String direccion;
+
+    // Datos de Procedencia
+    @Column(name = "colegio_procedencia", length = 100)
+    private String colegioProcedencia;
+
+    // Datos Médicos
+    @Column(name = "tipo_alumno", length = 50)
+    private String tipoAlumno; // Ejemplo: "Regular"
+
+    @Column(name = "recomendaciones_medicas", columnDefinition = "TEXT")
+    private String recomendacionesMedicas;
+
+    @Column(name = "tiene_informe_psicologico", length = 2) // "Si"/"No"
+    private String tieneInformePsicologico;
+
+    @Column(name = "tiene_certificado_medico", length = 2)
+    private String tieneCertificadoMedico;
+
+    @Column(name = "historial_clinico", columnDefinition = "TEXT")
+    private String historialClinico;
+
+    // Otros
+    @Column(name = "contacto_referencia", length = 50)
+    private String contactoReferencia; // "Facebook", "Web", etc.
 
     @PrePersist
     protected void onCreate() {

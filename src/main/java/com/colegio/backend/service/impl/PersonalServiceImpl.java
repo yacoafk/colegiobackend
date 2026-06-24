@@ -21,62 +21,6 @@ public class PersonalServiceImpl implements PersonalService {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
-    @Override
-    public Personal login(String dni, String contrasenia) {
-
-        Personal personal = personalRepository.findByNroDocumento(dni)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado."));
-
-        // 🛑 1. BLOQUEO TEMPORAL
-        if (personal.isBloqueado() && personal.getFechaBloqueo() != null) {
-
-            LocalDateTime ahora = LocalDateTime.now();
-            LocalDateTime tiempoDesbloqueo = personal.getFechaBloqueo().plusMinutes(10);
-
-            if (ahora.isAfter(tiempoDesbloqueo)) {
-                personal.setBloqueado(false);
-                personal.setIntentosFallidos(0);
-                personal.setFechaBloqueo(null);
-                personalRepository.save(personal);
-            } else {
-                long segundosRestantes = Duration.between(ahora, tiempoDesbloqueo).getSeconds();
-                long minutosRestantes = (segundosRestantes / 60) + 1;
-
-                throw new RuntimeException("Cuenta bloqueada. Intente en " + minutosRestantes + " minutos.");
-            }
-        }
-
-        // 🛑 2. Estado
-        if ("RETIRADO".equalsIgnoreCase(personal.getEstado())) {
-            throw new RuntimeException("El usuario se encuentra en estado RETIRADO.");
-        }
-
-        // 🛑 3. Password
-        if (!passwordEncoder.matches(contrasenia, personal.getContrasenia())) {
-
-            int nuevosIntentos = (personal.getIntentosFallidos() == null ? 0 : personal.getIntentosFallidos()) + 1;
-            personal.setIntentosFallidos(nuevosIntentos);
-
-            if (nuevosIntentos >= 4) {
-                personal.setBloqueado(true);
-                personal.setFechaBloqueo(LocalDateTime.now());
-            }
-
-            personalRepository.save(personal);
-
-            throw new RuntimeException("Contraseña incorrecta. Intento " + nuevosIntentos + " de 4.");
-        }
-
-        // 🛑 4. Reset
-        if (personal.getIntentosFallidos() > 0 || personal.isBloqueado()) {
-            personal.setIntentosFallidos(0);
-            personal.setBloqueado(false);
-            personal.setFechaBloqueo(null);
-            personalRepository.save(personal);
-        }
-
-        return personal;
-    }
 
     @Override
     public Personal registrarPersonal(PersonalRequest dto) {
