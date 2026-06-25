@@ -14,4 +14,10 @@ public class PadreRequest {
     // Datos de vinculación con el estudiante al registrar
     private Integer idEstudiante; 
     private String parentesco; // Ej: "PAPÁ", "MAMÁ", "TÍO(A)"
+
+    // Contacto y Ubicación
+    private String celular;
+    private String correo;
+    private String direccion;
+    private String observaciones;
 }

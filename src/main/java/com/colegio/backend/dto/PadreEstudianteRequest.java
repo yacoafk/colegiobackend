@@ -19,4 +19,9 @@ public class PadreEstudianteRequest {
     private String nombreEstudiante;
     private String apellidosEstudiante;
     private String dniEstudiante; 
+
+    private String celular;
+    private  String correo;
+    private String direccion;
+    private String observaciones;
 }

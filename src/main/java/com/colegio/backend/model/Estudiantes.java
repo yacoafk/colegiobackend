@@ -87,11 +87,11 @@ public class Estudiantes {
     @Column(name = "recomendaciones_medicas", columnDefinition = "TEXT")
     private String recomendacionesMedicas;
 
-    @Column(name = "tiene_informe_psicologico", length = 2) // "Si"/"No"
-    private String tieneInformePsicologico;
+    @Column(name = "tiene_informe_psicologico")
+    private Boolean tieneInformePsicologico;
 
-    @Column(name = "tiene_certificado_medico", length = 2)
-    private String tieneCertificadoMedico;
+    @Column(name = "tiene_certificado_medico")
+    private Boolean tieneCertificadoMedico;
 
     @Column(name = "historial_clinico", columnDefinition = "TEXT")
     private String historialClinico;

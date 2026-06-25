@@ -32,8 +32,8 @@ public class EstudianteRequest {
     // Datos Médicos (Mapeados como String para tus Varchar)
     private String tipoAlumno;
     private String recomendacionesMedicas;
-    private String tieneInformePsicologico; // "Si" o "No"
-    private String tieneCertificadoMedico;  // "Si" o "No"
+    private boolean tieneInformePsicologico;
+    private boolean tieneCertificadoMedico;
     private String historialClinico;
 
     // Referencia

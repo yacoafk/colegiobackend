@@ -39,4 +39,17 @@ public class Padres {
 
     @Column(name = "fecha_bloqueo")
     private LocalDateTime fechaBloqueo;
+
+
+    @Column(name = "celular", length = 15)
+    private String celular;
+
+    @Column(name = "correo", length = 100)
+    private String correo;
+
+    @Column(name = "direccion", length = 150)
+    private String direccion;
+
+    @Column(name = "observaciones", length = 255)
+    private String observaciones;
 }
