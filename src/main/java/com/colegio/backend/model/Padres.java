@@ -8,7 +8,7 @@ import lombok.Data;
 @Entity
 @Table(name = "padres")
 @Data
-public class Padres {
+public class Padres implements  Autenticable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,4 +52,8 @@ public class Padres {
 
     @Column(name = "observaciones", length = 255)
     private String observaciones;
+
+    @Override public String getContrasenia() { return this.contrasenia; }
+    @Override public String getNombres() { return this.nombres; }
+    @Override public String getApellidos() { return this.apellidos; }
 }

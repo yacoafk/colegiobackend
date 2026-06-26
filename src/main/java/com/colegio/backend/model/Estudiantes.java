@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "estudiantes")
 @Data
-public class Estudiantes {
+public class Estudiantes implements Autenticable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -106,4 +106,8 @@ public class Estudiantes {
             this.estado = "ACTIVO"; // 👈 Forzar estado activo en el insert inicial
         }
     }
+
+    @Override public String getContrasenia() { return this.contrasenia; }
+    @Override public String getNombres() { return this.nombres; }
+    @Override public String getApellidos() { return this.apellidos; }
 }

@@ -1,10 +1,13 @@
 package com.colegio.backend.service.impl;
 
+import com.colegio.backend.dto.CursoRequest;
 import com.colegio.backend.dto.EstudianteRequest;
+import com.colegio.backend.model.Cursos;
 import com.colegio.backend.model.Estudiantes;
 import com.colegio.backend.model.TiposDocumento;
 import com.colegio.backend.model.Grados;
 import com.colegio.backend.model.Sede;
+import com.colegio.backend.dao.CursoRepository;
 import com.colegio.backend.dao.EstudianteRepository;
 import com.colegio.backend.service.EstudianteService;
 
@@ -25,6 +28,9 @@ public class EstudianteServiceImpl implements EstudianteService {
 
     @Autowired
     private EstudianteRepository repository;
+
+    @Autowired
+    private CursoRepository cursoRepository;
 
     @Override
     public List<EstudianteRequest> listarTodos() {
@@ -137,6 +143,27 @@ public class EstudianteServiceImpl implements EstudianteService {
         estudiante.setContrasenia(passwordEncoder.encode(nuevaContrasenia));
         repository.save(estudiante);
     }
+
+
+    @Override
+    public List<CursoRequest> obtenerCursosPorEstudiante(Integer idEstudiante) {
+
+        Estudiantes estudiante = repository.findById(idEstudiante)
+                .orElseThrow(() -> new RuntimeException("Estudiante no encontrado"));
+
+        if (estudiante.getIdGrado() == null) {
+            throw new RuntimeException("El estudiante no tiene grado asignado");
+        }
+
+        Integer idGrado = estudiante.getIdGrado().getIdGrado();
+
+        List<Cursos> cursos = cursoRepository.findByIdGrado_IdGrado(idGrado);
+
+        return cursos.stream()
+                .map(this::convertirCursoARequest)
+                .collect(Collectors.toList());
+    }
+
     // Métodos auxiliares manuales de mapeo (puedes cambiarlos por ModelMapper o MapStruct si usas librerías)
     private EstudianteRequest convertirAEntityRequest(Estudiantes e) {
         EstudianteRequest dto = new EstudianteRequest();
@@ -204,6 +231,23 @@ public class EstudianteServiceImpl implements EstudianteService {
             Sede s = new Sede(); s.setIdSede(dto.getIdSede()); e.setIdSede(s);
         }
         return e;
+    }
+
+    private CursoRequest convertirCursoARequest(Cursos curso) {
+        CursoRequest dto = new CursoRequest();
+
+        dto.setIdCurso(curso.getIdCurso());
+        dto.setNombreCurso(curso.getNombreCurso());
+
+        if (curso.getIdGrado() != null) {
+            dto.setIdGrado(curso.getIdGrado().getIdGrado());
+        }
+
+        if (curso.getIdPersonal() != null) {
+            dto.setIdPersonal(curso.getIdPersonal().getIdPersonal());
+        }
+
+        return dto;
     }
 
 }

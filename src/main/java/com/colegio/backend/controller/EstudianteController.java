@@ -1,6 +1,8 @@
 package com.colegio.backend.controller;
 
+import com.colegio.backend.dto.CursoRequest;
 import com.colegio.backend.dto.EstudianteRequest;
+import com.colegio.backend.model.Cursos;
 import com.colegio.backend.model.Estudiantes;
 import com.colegio.backend.service.AsistenciaService;
 import com.colegio.backend.service.EstudianteService;
@@ -63,20 +65,29 @@ public class EstudianteController {
         return ResponseEntity.ok(estudiantes);
     }
 
-@PutMapping("/actualizar-contrasenia/{id}")
-    public ResponseEntity<?> actualizarContrasenia(@PathVariable Integer id, @RequestBody Map<String, String> body) {
-        try {
-            String nuevaContrasenia = body.get("nuevaContrasenia");
-            if (nuevaContrasenia == null || nuevaContrasenia.isEmpty()) {
-                return ResponseEntity.badRequest().body(Map.of("error", "La contraseña es requerida."));
-            }
-            // AQUÍ ESTABA EL ERROR, DEBE SER "service" (el nombre de tu variable inyectada)
-            service.actualizarContrasenia(id, nuevaContrasenia); 
-            
-            return ResponseEntity.ok(Map.of("mensaje", "Contraseña actualizada exitosamente."));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Error al actualizar la contraseña: " + e.getMessage()));
+    @GetMapping("/{id}/cursos")
+    public ResponseEntity<List<CursoRequest>> obtenerCursos(@PathVariable Integer id) {
+
+        List<CursoRequest> cursos = service.obtenerCursosPorEstudiante(id);
+
+        if (cursos.isEmpty()) {
+            return ResponseEntity.noContent().build();
         }
+
+        return ResponseEntity.ok(cursos);
+    }
+
+    @PutMapping("/actualizar-contrasenia/{id}")
+    public ResponseEntity<?> actualizarContrasenia(@PathVariable Integer id, @RequestBody Map<String, String> body) {
+        String nuevaContrasenia = body.get("nuevaContrasenia");
+        String confirmacion = body.get("confirmacion");
+
+        if (!nuevaContrasenia.equals(confirmacion)) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Las contraseñas no coinciden."));
+        }
+        
+        // Llamada al servicio
+        service.actualizarContrasenia(id, nuevaContrasenia);
+        return ResponseEntity.ok(Map.of("mensaje", "Contraseña actualizada exitosamente."));
     }
 }

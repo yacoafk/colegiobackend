@@ -6,6 +6,11 @@ import com.colegio.backend.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.Optional;
+import java.util.function.Function;
+
+import com.colegio.backend.model.Autenticable;
+
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -17,38 +22,20 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginResponse login(LoginRequest request) {
-        // 1. Buscar en Personal
-        var personalOpt = personalRepo.findByNroDocumento(request.getDni());
-        if (personalOpt.isPresent()) {
-            var personal = personalOpt.get(); // Extraemos la entidad
-            if (passwordEncoder.matches(request.getContrasenia(), personal.getContrasenia())) {
-                return new LoginResponse(personal.getIdPersonal(), personal.getNombres(), 
-                                        personal.getApellidos(), "PERSONAL", 
-                                        personal.getIdRol().getNombreRol(), null);
-            }
-        }
+        return authenticate(personalRepo.findByNroDocumento(request.getDni()), 
+                (p) -> new LoginResponse(p.getIdPersonal(), p.getNombres(), p.getApellidos(), "PERSONAL", p.getIdRol().getNombreRol(), null), request)
+            .or(() -> authenticate(estRepo.findByNroDocumento(request.getDni()), 
+                (e) -> new LoginResponse(e.getIdEstudiante(), e.getNombres(), e.getApellidos(), "ESTUDIANTE", "ESTUDIANTE", e.getCodigoEstudiante()), request))
+            .or(() -> authenticate(padreRepo.findByNroDocumento(request.getDni()), 
+                (pa) -> new LoginResponse(pa.getIdPadre(), pa.getNombres(), pa.getApellidos(), "PADRE", "PADRE", null), request))
+            .orElseThrow(() -> new RuntimeException("Credenciales incorrectas."));
+    }
 
-        // 2. Buscar en Estudiantes
-        var estudianteOpt = estRepo.findByNroDocumento(request.getDni());
-        if (estudianteOpt.isPresent()) {
-            var estudiante = estudianteOpt.get();
-            if (passwordEncoder.matches(request.getContrasenia(), estudiante.getContrasenia())) {
-                return new LoginResponse(estudiante.getIdEstudiante(), estudiante.getNombres(), 
-                                        estudiante.getApellidos(), "ESTUDIANTE", 
-                                        "ESTUDIANTE", estudiante.getCodigoEstudiante());
-            }
-        }
-
-        // 3. Buscar en Padres
-        var padreOpt = padreRepo.findByNroDocumento(request.getDni());
-        if (padreOpt.isPresent()) {
-            var padre = padreOpt.get();
-            if (passwordEncoder.matches(request.getContrasenia(), padre.getContrasenia())) {
-                return new LoginResponse(padre.getIdPadre(), padre.getNombres(), 
-                                        padre.getApellidos(), "PADRE", "PADRE", null);
-            }
-        }
-
-        throw new RuntimeException("Credenciales incorrectas.");
+    // El método genérico ahora usa T extends Autenticable
+    private <T extends Autenticable> Optional<LoginResponse> authenticate(Optional<T> entityOpt, 
+                                                                           Function<T, LoginResponse> mapper, 
+                                                                           LoginRequest request) {
+        return entityOpt.filter(entity -> passwordEncoder.matches(request.getContrasenia(), entity.getContrasenia()))
+                        .map(mapper);
     }
 }

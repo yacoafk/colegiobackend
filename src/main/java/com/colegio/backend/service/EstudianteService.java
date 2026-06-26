@@ -1,5 +1,6 @@
 package com.colegio.backend.service;
 
+import com.colegio.backend.dto.CursoRequest;
 import com.colegio.backend.dto.EstudianteRequest;
 import java.util.List;
 
@@ -11,4 +12,5 @@ public interface EstudianteService {
     EstudianteRequest modificar(Integer id, EstudianteRequest dto);
     void eliminarLogico(Integer id); // 👈 El borrado lógico pedido
     void actualizarContrasenia(Integer idEstudiante, String nuevaContrasenia);
+    List<CursoRequest> obtenerCursosPorEstudiante(Integer idEstudiante);
 }

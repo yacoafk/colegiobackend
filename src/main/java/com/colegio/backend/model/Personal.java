@@ -8,7 +8,7 @@ import lombok.Data;
 @Entity
 @Table(name = "personal")
 @Data
-public class Personal {
+public class Personal implements Autenticable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,4 +50,8 @@ public class Personal {
     @ManyToOne
     @JoinColumn(name = "id_sede", nullable = false, foreignKey = @ForeignKey(name = "fk_personal_sede"))
     private Sede idSede; 
+
+    @Override public String getContrasenia() { return this.contrasenia; }
+    @Override public String getNombres() { return this.nombres; }
+    @Override public String getApellidos() { return this.apellidos; }
 }
