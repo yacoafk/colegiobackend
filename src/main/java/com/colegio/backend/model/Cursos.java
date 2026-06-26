@@ -19,7 +19,7 @@ public class Cursos {
 
     @ManyToOne
     @JoinColumn(name = "id_personal", nullable = false, foreignKey = @ForeignKey(name = "fk_curso_profesor"))
-    private Personal idPersonal;
+    private Personales idPersonal;
 
     @Column(name = "nombre_curso", nullable = false, length = 150)
     private String nombreCurso;

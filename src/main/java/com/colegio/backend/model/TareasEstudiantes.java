@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 public class TareasEstudiantes {
 
     @EmbeddedId
-    private TareaEstudiantesId id = new TareaEstudiantesId();
+    private TareasEstudiantesId id = new TareasEstudiantesId();
 
     @ManyToOne
     @MapsId("idTarea")

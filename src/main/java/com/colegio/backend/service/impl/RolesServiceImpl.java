@@ -1,7 +1,7 @@
 package com.colegio.backend.service.impl;
 
 import com.colegio.backend.dao.RolesRepository;
-import com.colegio.backend.dto.RolRequest;
+import com.colegio.backend.dto.RolesRequest;
 import com.colegio.backend.model.Roles;
 import com.colegio.backend.service.RolesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ public class RolesServiceImpl implements RolesService {
     private RolesRepository rolesRepository;
 
     @Override
-    public Roles registrarRol(RolRequest request) {
+    public Roles registrarRol(RolesRequest request) {
         // Validation: No nulo o vacío
         if (request.getNombreRol() == null || request.getNombreRol().trim().isEmpty()) {
             throw new RuntimeException("El nombre del rol no puede estar vacío.");

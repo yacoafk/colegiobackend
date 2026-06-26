@@ -1,6 +1,6 @@
 package com.colegio.backend.controller;
 
-import com.colegio.backend.dto.RolRequest;
+import com.colegio.backend.dto.RolesRequest;
 import com.colegio.backend.model.Roles;
 import com.colegio.backend.service.RolesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ public class RolesController {
 
     // ➕ CREAR ROL (POST) -> /api/roles
     @PostMapping
-    public ResponseEntity<?> crearRol(@RequestBody RolRequest request) {
+    public ResponseEntity<?> crearRol(@RequestBody RolesRequest request) {
         try {
             Roles nuevoRol = rolesService.registrarRol(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevoRol);

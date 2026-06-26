@@ -21,7 +21,7 @@ public class Estudiantes implements Autenticable {
 
     @ManyToOne
     @JoinColumn(name = "id_tipo_doc", nullable = false, foreignKey = @ForeignKey(name = "fk_estudiante_tipo_doc"))
-    private TiposDocumento idTipoDoc;
+    private TiposDocumentos idTipoDoc;
 
     @Column(name = "nro_documento", unique = true, length = 20)
     private String nroDocumento;
@@ -47,7 +47,7 @@ public class Estudiantes implements Autenticable {
 
     @ManyToOne
     @JoinColumn(name = "id_sede", nullable = false, foreignKey = @ForeignKey(name = "fk_estudiante_sede"))
-    private Sede idSede;
+    private Sedes idSede;
 
     @Column(name = "monto_pension", nullable = false, precision = 10, scale = 2)
     private BigDecimal montoPension = BigDecimal.ZERO;

@@ -6,17 +6,17 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name = "padres")
+@Table(name = "personal")
 @Data
-public class Padres implements  Autenticable{
+public class Personales implements Autenticable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_padre")
-    private Integer idPadre;
+    @Column(name = "id_personal")
+    private Integer idPersonal;
 
     @ManyToOne
-    @JoinColumn(name = "id_tipo_doc", nullable = false, foreignKey = @ForeignKey(name = "fk_padre_tipo_doc"))
+    @JoinColumn(name = "id_tipo_doc", nullable = false, foreignKey = @ForeignKey(name = "fk_personal_tipo_doc"))
     private TiposDocumentos idTipoDoc;
 
     @Column(name = "nro_documento", nullable = false, unique = true, length = 20)
@@ -27,6 +27,9 @@ public class Padres implements  Autenticable{
 
     @Column(name = "apellidos", nullable = false, length = 100)
     private String apellidos;
+
+    @Column(name = "estado", nullable = false, length = 100)
+    private String estado;
 
     @Column(name = "contrasenia", nullable = false, length = 100)
     private String contrasenia;
@@ -40,18 +43,13 @@ public class Padres implements  Autenticable{
     @Column(name = "fecha_bloqueo")
     private LocalDateTime fechaBloqueo;
 
+    @ManyToOne
+    @JoinColumn(name = "id_rol", nullable = false, foreignKey = @ForeignKey(name = "fk_personal_rol"))
+    private Roles idRol;
 
-    @Column(name = "celular", length = 15)
-    private String celular;
-
-    @Column(name = "correo", length = 100)
-    private String correo;
-
-    @Column(name = "direccion", length = 150)
-    private String direccion;
-
-    @Column(name = "observaciones", length = 255)
-    private String observaciones;
+    @ManyToOne
+    @JoinColumn(name = "id_sede", nullable = false, foreignKey = @ForeignKey(name = "fk_personal_sede"))
+    private Sedes idSede; 
 
     @Override public String getContrasenia() { return this.contrasenia; }
     @Override public String getNombres() { return this.nombres; }

@@ -15,7 +15,7 @@ public class Grados {
 
     @ManyToOne
     @JoinColumn(name = "id_sede", nullable = false, foreignKey = @ForeignKey(name = "fk_grado_sede"))
-    private Sede idSede; // Asumiendo que tu clase anterior se llama Sede
+    private Sedes idSede; // Asumiendo que tu clase anterior se llama Sede
 
     @Column(name = "nombre_grado", nullable = false, length = 100)
     private String nombreGrado;
