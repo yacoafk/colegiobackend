@@ -15,5 +15,6 @@ public interface CursosService {
     void eliminar(Integer id);
     Personales obtenerPersonalPorCurso(Integer idCurso);
     List<Cursos> listarCursosPorProfesor(Integer idPersonal);
+    List<CursosRequest> listarCursosDtoPorProfesor(Integer idPersonal);
     CursosContenidosRequest obtenerContenidoCurso(Integer idCurso);
 }

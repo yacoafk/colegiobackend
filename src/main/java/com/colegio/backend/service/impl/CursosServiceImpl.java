@@ -148,6 +148,18 @@ public class CursosServiceImpl implements CursosService {
         return response;
     }
 
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CursosRequest> listarCursosDtoPorProfesor(Integer idPersonal) {
+
+        List<Cursos> cursos = cursoRepository.findByIdPersonal_IdPersonal(idPersonal);
+
+        return cursos.stream()
+                .map(this::convertirADto)
+                .collect(Collectors.toList());
+    }
+
     // --- Métodos Helper de Conversión ---
     
     private CursosRequest guardarOActualizar(Cursos entidad, CursosRequest dto) {

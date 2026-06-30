@@ -94,4 +94,13 @@ public class CursosController {
                     .body("{\"error\": \"Error interno al obtener contenido del curso.\"}");
         }
     }
+
+    @GetMapping("/profesor/{idPersonal}/dto")
+    public ResponseEntity<List<CursosRequest>> listarCursosDtoPorProfesor(@PathVariable Integer idPersonal) {
+        try {
+            return ResponseEntity.ok(cursoService.listarCursosDtoPorProfesor(idPersonal));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }
