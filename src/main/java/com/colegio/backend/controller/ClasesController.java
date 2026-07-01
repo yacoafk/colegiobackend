@@ -1,6 +1,7 @@
 package com.colegio.backend.controller;
 
 import com.colegio.backend.dto.ClasesRequest;
+import com.colegio.backend.model.Estudiantes;
 import com.colegio.backend.service.ClasesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -54,6 +55,18 @@ public class ClasesController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
+
+    @GetMapping("/{idClase}/estudiantes")
+    public ResponseEntity<List<Estudiantes>> obtenerEstudiantesPorClase(@PathVariable Integer idClase) {
+
+        List<Estudiantes> estudiantes = claseService.obtenerEstudiantesPorClase(idClase);
+
+        if (estudiantes.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(estudiantes);
     }
     
 }

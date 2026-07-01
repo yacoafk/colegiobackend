@@ -2,9 +2,11 @@ package com.colegio.backend.service.impl;
 
 import com.colegio.backend.dao.ClasesRepository;
 import com.colegio.backend.dao.CursosRepository;
+import com.colegio.backend.dao.EstudiantesRepository;
 import com.colegio.backend.dto.ClasesRequest;
 import com.colegio.backend.model.Clases;
 import com.colegio.backend.model.Cursos;
+import com.colegio.backend.model.Estudiantes;
 import com.colegio.backend.service.ClasesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,9 @@ public class ClasesServiceImpl implements ClasesService {
 
     @Autowired
     private CursosRepository cursoRepository;
+
+    @Autowired
+    private EstudiantesRepository estudianteRepository; 
 
     @Override
     @Transactional(readOnly = true)
@@ -68,6 +73,25 @@ public class ClasesServiceImpl implements ClasesService {
             throw new RuntimeException("No se puede eliminar. Clase no encontrada con ID: " + id);
         }
         claseRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Estudiantes> obtenerEstudiantesPorClase(Integer idClase) {
+
+        Clases clase = claseRepository.findById(idClase)
+                .orElseThrow(() -> new RuntimeException("Clase no encontrada"));
+
+        // ACCESO CORRECTO:
+        // clase.getIdCurso() devuelve el objeto Cursos
+        // .getGrado() accede al grado dentro de ese curso
+        if (clase.getIdCurso() == null || clase.getIdCurso().getIdGrado() == null) {
+            throw new RuntimeException("La clase no tiene curso o grado asignado");
+        }
+
+        Integer idGrado = clase.getIdCurso().getIdGrado().getIdGrado();
+
+        return estudianteRepository.findByIdGrado_IdGrado(idGrado);
     }
 
     // --- Métodos de Utilidad (Mapeos Corregidos) ---

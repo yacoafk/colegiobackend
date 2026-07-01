@@ -1,6 +1,8 @@
 package com.colegio.backend.service;
 
 import com.colegio.backend.dto.ClasesRequest;
+import com.colegio.backend.model.Estudiantes;
+
 import java.util.List;
 
 public interface ClasesService {
@@ -10,4 +12,5 @@ public interface ClasesService {
     ClasesRequest registrar(ClasesRequest request);
     ClasesRequest modificar(Integer id, ClasesRequest request);
     void eliminar(Integer id);
+    List<Estudiantes> obtenerEstudiantesPorClase(Integer idClase);
 }
